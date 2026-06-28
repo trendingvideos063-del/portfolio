@@ -60,8 +60,10 @@ export default function Hero() {
       </div>
 
       <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/10 to-black/70 z-10 pointer-events-none" />
-      {/* Dedicated scrim behind the text column — guarantees legibility regardless of where the subject moves in the footage */}
-      <div className="absolute inset-y-0 left-0 w-full md:w-[62%] lg:w-[55%] bg-gradient-to-r from-black/90 via-black/65 to-transparent z-10 pointer-events-none" />
+      {/* Mobile: text stacks full-width over the video, so a uniform dark scrim guarantees legibility regardless of where the subject is in frame */}
+      <div className="absolute inset-0 bg-black/55 md:hidden z-10 pointer-events-none" />
+      {/* Desktop: text sits in a column beside the video, so a side scrim sized to that column is enough */}
+      <div className="hidden md:block absolute inset-y-0 left-0 w-[62%] lg:w-[55%] bg-gradient-to-r from-black/90 via-black/65 to-transparent z-10 pointer-events-none" />
 
       <div className="absolute inset-0 z-20 px-6 md:px-12 max-w-7xl mx-auto flex flex-col md:flex-row justify-center md:justify-between items-start text-left w-full h-full pt-28 md:pt-[12%]">
         <div className="flex flex-col items-start text-left max-w-md lg:max-w-lg w-full">

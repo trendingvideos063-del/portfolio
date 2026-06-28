@@ -1,33 +1,60 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useRef, useState } from "react";
+import { motion, useScroll, useSpring, useMotionValueEvent, MotionValue } from "framer-motion";
 import { skillsData } from "@/lib/data";
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } },
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 100, damping: 12 } },
-};
 
 const skillPillVariants = {
   initial: { scale: 1 },
   hover: { scale: 1.08, transition: { type: "spring" as const, stiffness: 400, damping: 10 } },
 };
 
-function SkillCard({ category, skills }: { category: string; skills: string[] }) {
+interface SkillCardProps {
+  category: string;
+  skills: string[];
+  pathLength: MotionValue<number>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
+}
+
+function SkillCard({ category, skills, pathLength, containerRef }: SkillCardProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [isActive, setIsActive] = useState(false);
+
+  useMotionValueEvent(pathLength, "change", (latest) => {
+    if (!ref.current || !containerRef.current) return;
+    const cardRect = ref.current.getBoundingClientRect();
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const cardTopRelativeToContainer = cardRect.top - containerRect.top;
+    const containerHeight = containerRect.height;
+    const triggerY = cardTopRelativeToContainer + 40;
+    const lineTipY = latest * containerHeight;
+
+    if (lineTipY >= triggerY && !isActive) setIsActive(true);
+    else if (lineTipY < triggerY && isActive) setIsActive(false);
+  });
+
   return (
     <motion.div
-      variants={itemVariants}
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: "-80px" }}
+      transition={{ type: "spring", stiffness: 100, damping: 12 }}
       whileHover={{ y: -8, transition: { type: "spring", stiffness: 300, damping: 20 } }}
-      className="group relative bg-white border border-black/5 rounded-3xl p-6 h-fit shadow-sm hover:shadow-xl hover:shadow-red-500/5 transition-all duration-500"
+      className={`group relative border rounded-3xl p-6 h-fit shadow-sm transition-colors duration-500 ${
+        isActive
+          ? "bg-[#ff2a2a] border-[#ff2a2a] shadow-xl shadow-red-500/20"
+          : "bg-white border-black/5 hover:shadow-xl hover:shadow-red-500/5"
+      }`}
     >
-      <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-red-500/0 via-red-500/0 to-red-500/0 group-hover:from-red-500/5 group-hover:to-red-500/5 transition-all duration-500 pointer-events-none" />
       <div className="relative z-10">
-        <h3 className="text-sm font-semibold text-black mb-4 tracking-tight">{category}</h3>
+        <h3
+          className={`text-sm font-semibold mb-4 tracking-tight transition-colors duration-500 ${
+            isActive ? "text-white" : "text-black"
+          }`}
+        >
+          {category}
+        </h3>
         <div className="flex flex-wrap gap-2">
           {skills.map((skill) => (
             <motion.button
@@ -35,7 +62,11 @@ function SkillCard({ category, skills }: { category: string; skills: string[] })
               variants={skillPillVariants}
               initial="initial"
               whileHover="hover"
-              className="px-3 py-1.5 text-xs font-medium text-black bg-black/3 hover:bg-red-500/10 border border-black/5 hover:border-red-500/20 rounded-full transition-all duration-300 cursor-default select-none hover:text-red-500"
+              className={`px-3 py-1.5 text-xs font-medium rounded-full transition-all duration-300 cursor-default select-none border ${
+                isActive
+                  ? "text-white bg-white/10 border-white/20"
+                  : "text-black bg-black/3 hover:bg-red-500/10 border-black/5 hover:border-red-500/20 hover:text-red-500"
+              }`}
             >
               {skill}
             </motion.button>
@@ -47,6 +78,15 @@ function SkillCard({ category, skills }: { category: string; skills: string[] })
 }
 
 export default function Skills() {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start center", "end center"],
+  });
+
+  const pathLength = useSpring(scrollYProgress, { stiffness: 60, damping: 20, restDelta: 0.001 });
+
   return (
     <section id="skills" className="relative w-full bg-white py-20 md:py-28 overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
@@ -72,17 +112,52 @@ export default function Skills() {
           </p>
         </motion.div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6"
-        >
+        <div ref={containerRef} className="relative flex flex-col gap-8 max-w-xl mx-auto">
+          {/* Connecting dashed line, revealed and turning red as you scroll through the section */}
+          <svg
+            className="absolute top-0 left-1/2 -translate-x-1/2 w-4 h-full pointer-events-none z-0"
+            viewBox="0 0 4 100"
+            preserveAspectRatio="none"
+          >
+            <path
+              d="M 2,0 L 2,100"
+              fill="none"
+              stroke="#cbd5e1"
+              strokeWidth="4"
+              strokeDasharray="4 6"
+              vectorEffect="non-scaling-stroke"
+            />
+            <mask id="skills-path-mask">
+              <motion.path
+                d="M 2,0 L 2,100"
+                fill="none"
+                stroke="white"
+                strokeWidth="4"
+                style={{ pathLength }}
+                vectorEffect="non-scaling-stroke"
+              />
+            </mask>
+            <path
+              d="M 2,0 L 2,100"
+              fill="none"
+              stroke="#ff2a2a"
+              strokeWidth="4"
+              strokeDasharray="4 6"
+              mask="url(#skills-path-mask)"
+              vectorEffect="non-scaling-stroke"
+            />
+          </svg>
+
           {skillsData.map((item) => (
-            <SkillCard key={item.category} category={item.category} skills={item.skills} />
+            <SkillCard
+              key={item.category}
+              category={item.category}
+              skills={item.skills}
+              pathLength={pathLength}
+              containerRef={containerRef}
+            />
           ))}
-        </motion.div>
+        </div>
       </div>
 
       <motion.div
