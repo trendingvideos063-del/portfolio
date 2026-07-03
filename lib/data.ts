@@ -4,7 +4,7 @@ export const profile = {
   title: "Full Stack Developer",
   tagline: "I Build Anything with Code & AI",
   subtitle:
-    "Custom software, websites, apps & automation — designed and built fast, secure, and scalable from frontend to backend.",
+    "Custom software, websites, apps and automation. Designed and built fast, secure, and scalable from frontend to backend.",
   location: "Karachi, Pakistan",
   email: "yaseen12waseem43@gmail.com",
   linkedin: "https://www.linkedin.com/in/yaseen-waseem-869a59313/",

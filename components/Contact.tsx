@@ -14,6 +14,7 @@ export default function Contact() {
     message: "",
     permission: false,
   });
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   const y = useTransform(scrollYProgress, [0, 1], ["-20%", "30%"]);
@@ -29,15 +30,37 @@ export default function Contact() {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.permission) {
       alert("Please accept the contact permission checkbox.");
       return;
     }
-    console.log("Form Data Submitted:", formData);
-    alert(`Thanks ${formData.firstName}! Message captured.`);
-    setFormData({ firstName: "", lastName: "", email: "", message: "", permission: false });
+
+    setStatus("sending");
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          access_key: process.env.NEXT_PUBLIC_WEB3FORMS_KEY,
+          subject: `New portfolio message from ${formData.firstName} ${formData.lastName}`,
+          name: `${formData.firstName} ${formData.lastName}`,
+          email: formData.email,
+          message: formData.message,
+        }),
+      });
+      const result = await res.json();
+
+      if (result.success) {
+        setStatus("sent");
+        setFormData({ firstName: "", lastName: "", email: "", message: "", permission: false });
+      } else {
+        setStatus("error");
+      }
+    } catch {
+      setStatus("error");
+    }
   };
 
   return (
@@ -138,12 +161,19 @@ export default function Contact() {
                   .
                 </p>
                 <div className="flex flex-col sm:flex-row sm:justify-between sm:items-end gap-6">
-                  <p className="max-w-[250px] leading-relaxed">Based in {profile.location}.</p>
+                  <p className="max-w-[250px] leading-relaxed">
+                    {status === "sent"
+                      ? "Thanks! Your message has been sent."
+                      : status === "error"
+                        ? "Something went wrong. Please email me directly instead."
+                        : `Based in ${profile.location}.`}
+                  </p>
                   <button
                     type="submit"
-                    className="px-8 py-3 rounded-full border border-white/40 text-white font-bold flex items-center justify-center gap-3 hover:bg-white hover:text-[#ff2a2a] transition-all duration-300 group whitespace-nowrap self-start sm:self-auto"
+                    disabled={status === "sending"}
+                    className="px-8 py-3 rounded-full border border-white/40 text-white font-bold flex items-center justify-center gap-3 hover:bg-white hover:text-[#ff2a2a] transition-all duration-300 group whitespace-nowrap self-start sm:self-auto disabled:opacity-60 disabled:cursor-not-allowed"
                   >
-                    Send
+                    {status === "sending" ? "Sending..." : status === "sent" ? "Sent" : "Send"}
                     <svg className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
                     </svg>

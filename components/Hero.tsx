@@ -52,7 +52,7 @@ export default function Hero() {
           muted={isMuted}
           playsInline
           preload="auto"
-          className="absolute top-0 left-0 w-full h-full object-cover object-[70%_center] md:object-[78%_center] will-change-transform"
+          className="absolute top-0 left-0 w-full h-full object-cover object-[50%_15%] md:object-[right_10%] will-change-transform"
           poster="/images/hero-fallback.png"
         >
           <source src="/videos/hero.mp4" type="video/mp4" />
@@ -63,10 +63,10 @@ export default function Hero() {
       {/* Mobile: text stacks full-width over the video, so a uniform dark scrim guarantees legibility regardless of where the subject is in frame */}
       <div className="absolute inset-0 bg-black/55 md:hidden z-10 pointer-events-none" />
       {/* Desktop: text sits in a column beside the video, so a side scrim sized to that column is enough */}
-      <div className="hidden md:block absolute inset-y-0 left-0 w-[62%] lg:w-[55%] bg-gradient-to-r from-black/90 via-black/65 to-transparent z-10 pointer-events-none" />
+      <div className="hidden md:block absolute inset-y-0 left-0 w-[45%] lg:w-[40%] bg-gradient-to-r from-black/80 via-black/40 to-transparent z-10 pointer-events-none" />
 
-      <div className="absolute inset-0 z-20 px-6 md:px-12 max-w-7xl mx-auto flex flex-col md:flex-row justify-center md:justify-between items-start text-left w-full h-full pt-28 md:pt-[12%]">
-        <div className="flex flex-col items-start text-left max-w-md lg:max-w-lg w-full">
+      <div className="absolute inset-0 z-20 px-6 md:px-12 max-w-7xl mx-auto flex flex-col md:flex-row justify-center md:justify-between items-start text-left w-full h-full pt-64 sm:pt-72 md:pt-[12%]">
+        <div className="flex flex-col items-start text-left max-w-[200px] md:max-w-[215px] w-full">
           <motion.span
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
@@ -81,9 +81,9 @@ export default function Hero() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-            className="text-white text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black mb-5 tracking-tight leading-[1.05] text-balance"
+            className="text-white text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-black mb-5 tracking-tight leading-[1.05] text-balance"
           >
-            Hi, I&rsquo;m {profile.firstName}
+            Hi I&rsquo;m {profile.firstName}
             <br />
             <span className="relative text-transparent bg-clip-text bg-gradient-to-r from-white via-white to-white/80 drop-shadow-[0_2px_10px_rgba(0,0,0,0.2)]">
               {profile.title}
@@ -103,17 +103,17 @@ export default function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.55, duration: 0.7 }}
-            className="flex flex-row items-center gap-4 w-full"
+            className="flex flex-row items-center gap-2 md:gap-3 w-full"
           >
             <a
               href="#projects"
-              className="px-6 py-3 text-xs md:text-sm rounded-full bg-white text-black font-bold hover:bg-neutral-100 transition-all duration-300 transform hover:-translate-y-0.5 shadow-[0_10px_30px_rgba(255,255,255,0.15)] inline-block text-center"
+              className="px-4 py-2.5 text-xs rounded-full bg-white text-black font-bold hover:bg-neutral-100 transition-all duration-300 transform hover:-translate-y-0.5 shadow-[0_10px_30px_rgba(255,255,255,0.15)] inline-block text-center whitespace-nowrap"
             >
               View My Work
             </a>
             <a
               href="#contact"
-              className="px-6 py-3 text-xs md:text-sm rounded-full glass text-white font-bold hover:bg-white/15 transition-all duration-300 transform hover:-translate-y-0.5 inline-block text-center"
+              className="px-4 py-2.5 text-xs rounded-full glass text-white font-bold hover:bg-white/15 transition-all duration-300 transform hover:-translate-y-0.5 inline-block text-center whitespace-nowrap"
             >
               Contact Me
             </a>
