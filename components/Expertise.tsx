@@ -153,7 +153,7 @@ export default function Expertise() {
         </svg>
 
         <svg
-          className="md:hidden absolute top-0 left-[50%] -translate-x-1/2 w-4 h-[100%] pointer-events-none z-0"
+          className="md:hidden absolute top-[420px] left-[50%] -translate-x-1/2 w-4 h-[calc(100%-420px)] pointer-events-none z-0"
           viewBox="0 0 4 100"
           preserveAspectRatio="none"
         >
