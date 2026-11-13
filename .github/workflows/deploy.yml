@@ -36,6 +36,7 @@ jobs:
         run: npm run build
         env:
           GITHUB_PAGES: "true"
+          NEXT_PUBLIC_BASE_PATH: "/portfolio"
 
       - name: Upload website
         uses: actions/upload-pages-artifact@v3
