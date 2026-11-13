@@ -4,10 +4,12 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { profile } from "@/lib/data";
 
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH || "";
+
 const techLogos = [
-  { src: "/images/react.png", alt: "React" },
-  { src: "/images/node.png", alt: "Node.js" },
-  { src: "/images/mongodb.png", alt: "MongoDB" },
+  { src: `${basePath}/images/react.png`, alt: "React" },
+  { src: `${basePath}/images/node.png`, alt: "Node.js" },
+  { src: `${basePath}/images/mongodb.png`, alt: "MongoDB" },
 ];
 
 export default function About() {
@@ -36,7 +38,7 @@ export default function About() {
               </div>
               <div className="w-full aspect-[3/4] overflow-hidden rounded-xl bg-gray-800 border-2 border-transparent">
                 <Image
-                  src="/images/yaseen.png"
+                 src={`${basePath}/images/yaseen.png`}
                   alt={profile.name}
                   width={280}
                   height={373}
