@@ -75,9 +75,9 @@ export default function Hero() {
           playsInline
           preload="auto"
           className="absolute top-0 left-0 w-full h-full object-cover object-center md:object-[68%_center] will-change-transform"
-          poster="/images/hero-fallback.png"
+          poster={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/images/hero-fallback.png`}
         >
-          <source src="/videos/hero.mp4" type="video/mp4" />
+       <source src={`${process.env.NEXT_PUBLIC_BASE_PATH || ""}/videos/hero.mp4`} type="video/mp4" />
         </video>
       </div>
 
